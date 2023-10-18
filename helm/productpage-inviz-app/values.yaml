@@ -1,0 +1,17 @@
+bookinfoProductpage:
+  serviceAccount:
+    annotations: {}
+kubernetesClusterDomain: cluster.local
+productpage:
+  ports:
+  - name: http
+    port: 9080
+    targetPort: 0
+  type: ClusterIP
+productpageV1:
+  productpage:
+    image:
+      repository: docker.io/istio/examples-bookinfo-productpage-v1
+      tag: 1.18.0
+    imagePullPolicy: IfNotPresent
+  replicas: 1

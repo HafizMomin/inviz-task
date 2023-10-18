@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "productpage-inviz-app.fullname" . }}-productpage-v1
+  labels:
+    app: productpage
+    version: v1
+  {{- include "productpage-inviz-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.productpageV1.replicas }}
+  selector:
+    matchLabels:
+      app: productpage
+      version: v1
+    {{- include "productpage-inviz-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: productpage
+        version: v1
+      {{- include "productpage-inviz-app.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9080"
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.productpageV1.productpage.image.repository }}:{{ .Values.productpageV1.productpage.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.productpageV1.productpage.imagePullPolicy }}
+        name: productpage
+        ports:
+        - containerPort: 9080
+        resources: {}
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+      serviceAccountName: {{ include "productpage-inviz-app.fullname" . }}-bookinfo-productpage
+      volumes:
+      - emptyDir: {}
+        name: tmp

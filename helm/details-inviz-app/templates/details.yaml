@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "details-inviz-app.fullname" . }}-details
+  labels:
+    app: details
+    service: details
+  {{- include "details-inviz-app.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.details.type }}
+  selector:
+    app: details
+  {{- include "details-inviz-app.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.details.ports | toYaml | nindent 2 -}}

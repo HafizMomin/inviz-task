@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "details-inviz-app.fullname" . }}-details-v1
+  labels:
+    app: details
+    version: v1
+  {{- include "details-inviz-app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.detailsV1.replicas }}
+  selector:
+    matchLabels:
+      app: details
+      version: v1
+    {{- include "details-inviz-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: details
+        version: v1
+      {{- include "details-inviz-app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.detailsV1.details.image.repository }}:{{ .Values.detailsV1.details.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.detailsV1.details.imagePullPolicy }}
+        name: details
+        ports:
+        - containerPort: 9080
+        resources: {}
+      serviceAccountName: {{ include "details-inviz-app.fullname" . }}-bookinfo-details

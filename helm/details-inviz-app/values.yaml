@@ -1,0 +1,17 @@
+bookinfoDetails:
+  serviceAccount:
+    annotations: {}
+details:
+  ports:
+  - name: http
+    port: 9080
+    targetPort: 0
+  type: ClusterIP
+detailsV1:
+  details:
+    image:
+      repository: docker.io/istio/examples-bookinfo-details-v1
+      tag: 1.18.0
+    imagePullPolicy: IfNotPresent
+  replicas: 1
+kubernetesClusterDomain: cluster.local
